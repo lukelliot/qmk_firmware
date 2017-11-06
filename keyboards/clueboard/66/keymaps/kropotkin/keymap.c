@@ -55,11 +55,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    /* Keymap _FL: Function Layer
    */
 [_FL] = KEYMAP(
-  xxxxxxx,  KC_F1,  KC_F2,  KC_F3,  KC_F4, BL_DEC, BL_INC,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9, KC_F10, KC_F11, KC_F12,        xxxxxxx, \
+  xxxxxxx,  KC_F1,  KC_F2,  KC_F3,  KC_F4,xxxxxxx,xxxxxxx,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9, KC_F10, KC_F11, KC_F12,        xxxxxxx, \
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,KC_MPLY,KC_MRWD,KC_MFFD,KC_MUTE,                xxxxxxx, \
-  xxxxxxx,xxxxxxx,xxxxxxx,TG(_DV),xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,RESET  ,                         \
+  xxxxxxx,xxxxxxx,xxxxxxx,TG(_DV),xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,                         \
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,TG(_NR),xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,        KC_PGUP,         \
-  xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,        xxxxxxx,xxxxxxx,                        xxxxxxx,xxxxxxx,xxxxxxx,MO(_FL),KC_HOME,KC_PGDN,KC_END),
+  RESET  ,xxxxxxx,xxxxxxx,xxxxxxx,        xxxxxxx,xxxxxxx,                        xxxxxxx,xxxxxxx,xxxxxxx,MO(_FL),KC_HOME,KC_PGDN,KC_END),
 
 
   /* Keymap _CL: Color layer
@@ -69,6 +69,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,                RGB_TOG, \
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,                         \
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,        RGB_SAI,         \
-  xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,        RGB_MOD,RGB_MOD,                        xxxxxxx,RGB_VAD,RGB_VAI,xxxxxxx,RGB_HUD,RGB_SAD,RGB_HUI),
+  xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,        RGB_MOD,RGB_MOD,                        xxxxxxx,RGB_VAD,RGB_VAI,BL_TOGG,RGB_HUD,RGB_SAD,RGB_HUI),
 
 };
