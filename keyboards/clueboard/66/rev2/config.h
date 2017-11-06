@@ -25,7 +25,7 @@
 
  /* Backlight configuration
  */
-#define BACKLIGHT_LEVELS 1
+#define BACKLIGHT_LEVELS 10
 
 /* Underlight configuration
  */
