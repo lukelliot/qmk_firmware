@@ -1,27 +1,83 @@
 #include "66.h"
 
-// ALIAS
-#define CURLY_T CTL_T(KC_LCBR)
-
-// Helpful defines
+// Fill-ins for readability
 #define _______ KC_TRNS
 #define xxxxxxx KC_NO
 
-// Each layer gets a name for readability, which is then used in the key    map matrix below.
-// The underscores don't mean anything - you can have a layer called STUFF or any other name.
-// Layer names don't all need to be of the same length, obviously, and you can also skip them
-// entirely and just use numbers.
+enum kropotkin_kc
+{
+  KR_LCTL,
+  KR_LALT,
+  KR_LSFT,
+  KR_RSFT,
+};
+
+
+static bool kr_shift_interrupted[2] = {0, 0};
+static uint16_t kr_shift_timer[2] = {0, 0};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch(keycode) {
+    case KR_LCTL: {
+      if (record->event.pressed) {
+        shift_interrupted[0] = false;
+        scs_timer[0] = timer_read ();
+        register_mods(MOD_BIT(KC_LSFT));
+      }
+      else {
+        #ifdef DISABLE_SPACE_CADET_ROLLOVER
+          if (get_mods() & MOD_BIT(KC_RSFT)) {
+            shift_interrupted[0] = true;
+            shift_interrupted[1] = true;
+          }
+        #endif
+        if (!shift_interrupted[0] && timer_elapsed(scs_timer[0]) < TAPPING_TERM) {
+          register_code(LSPO_KEY);
+          unregister_code(LSPO_KEY);
+        }
+        unregister_mods(MOD_BIT(KC_LSFT));
+      }
+      return false;
+    }
+
+    case KC_RSPC: {
+      if (record->event.pressed) {
+        shift_interrupted[1] = false;
+        scs_timer[1] = timer_read ();
+        register_mods(MOD_BIT(KC_RSFT));
+      }
+      else {
+        #ifdef DISABLE_SPACE_CADET_ROLLOVER
+          if (get_mods() & MOD_BIT(KC_LSFT)) {
+            shift_interrupted[0] = true;
+            shift_interrupted[1] = true;
+          }
+        #endif
+        if (!shift_interrupted[1] && timer_elapsed(scs_timer[1]) < TAPPING_TERM) {
+          register_code(RSPC_KEY);
+          unregister_code(RSPC_KEY);
+        }
+        unregister_mods(MOD_BIT(KC_RSFT));
+      }
+      return false;
+    }
+  }
+}
 
 // Foundation
 #define _BL 0
 // Dvorak
 #define _DV 1
+// Lower Macro
+#define _LM 2
+// Upper Macro
+#define _UM 3
 // Normalize for normies
-#define _NR 2
+#define _NR 4
 // Function Layer
-#define _FL 3
+#define _FL 5
 // Color Config
-#define _CL 4
+#define _CL 6
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap _BL: Base Layer (Default Layer)
@@ -29,8 +85,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_BL] = KEYMAP(
   KC_GESC,KC_1,   KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,   KC_9,   KC_0,   KC_MINS,KC_EQL, KC_GRV, KC_BSLS,        TG(_CL), \
   KC_TAB ,KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,   KC_O,   KC_P,   KC_LBRC,KC_RBRC,KC_BSPC,                KC_DEL , \
-  CURLY_T,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NO  ,KC_ENT ,                         \
-  KC_LALT,KC_LSPO,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,KC_DOT, KC_SLSH,KC_NO  ,KC_RSFT,        KC_UP,           \
+  KC_LCTL,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NO  ,KC_ENT ,                         \
+  KC_LALT,KC_LSPO,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,KC_DOT, KC_SLSH,KC_NO  ,KC_RSPC,        KC_UP,           \
   KC_CAPS,KC_LALT,KC_LGUI,KC_MHEN,        KC_SPC, KC_SPC,                         KC_HENK,KC_RGUI,KC_RALT,MO(_FL),KC_LEFT,KC_DOWN,KC_RGHT),
 
   /*Keymap _DV: Dvorak
@@ -49,13 +105,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_GRV ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_BSPC,KC_BSPC,        _______, \
   _______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_BSLS,                _______, \
   KC_CAPS,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,                         \
-  KC_LSFT,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,        _______,         \
+  KC_LSFT,KC_LSFT,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_RSFT,        _______,         \
   KC_LCTL,KC_LALT,_______,_______,        _______,   _______,                     _______,_______,KC_RALT,_______,_______,_______,_______),
 
    /* Keymap _FL: Function Layer
    */
 [_FL] = KEYMAP(
-  xxxxxxx,  KC_F1,  KC_F2,  KC_F3,  KC_F4,xxxxxxx,xxxxxxx,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9, KC_F10, KC_F11, KC_F12,       KC_POWER, \
+  KC_POWER, KC_F1,  KC_F2,  KC_F3,  KC_F4,xxxxxxx,xxxxxxx,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9, KC_F10, KC_F11, KC_F12,       KC_POWER, \
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,KC_MPLY,KC_MRWD,KC_MFFD,KC_MUTE,                KC_SLEP, \
   xxxxxxx,xxxxxxx,xxxxxxx,TG(_DV),xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,                         \
   xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,TG(_NR),xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,xxxxxxx,        KC_PGUP,         \
