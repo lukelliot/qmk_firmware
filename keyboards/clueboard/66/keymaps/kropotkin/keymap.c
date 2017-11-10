@@ -4,62 +4,7 @@
 #define _______ KC_TRNS
 #define xxxxxxx KC_NO
 
-enum kropotkin_kc
-{
-  KR_LCTL = SAFE_RANGE,
-  KR_LALT,
-  KR_LSFT,
-  KR_RSFT,
-};
-
-
-static bool kr_shift_interrupted[2] = {0, 0};
-static uint16_t kr_ctl_timer[1] = {0};
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch(keycode) {
-    case KR_LCTL: {
-      if (record->event.pressed) {
-        shift_interrupted[0] = false;
-        kr_ctl_timer[0] = timer_read ();
-        register_mods(MOD_BIT(KC_LCTL));
-      }
-      else {
-        if (timer_elapsed(kr_ctl_timer[0]) < TAPPING_TERM) {
-          unregister_mods(MOD_BIT(KC_LSFT));
-          register_code(KC_LSFT);
-          register_code(KC_MINS);
-          unregister_code(KC_MINS);
-          unregister_code(KC_LSFT);
-        }
-        unregister_mods(MOD_BIT(KC_LSFT));
-      }
-      return false;
-    }
-
-    case KC_RSPC: {
-      if (record->event.pressed) {
-        shift_interrupted[1] = false;
-        scs_timer[1] = timer_read ();
-        register_mods(MOD_BIT(KC_RSFT));
-      }
-      else {
-        #ifdef DISABLE_SPACE_CADET_ROLLOVER
-          if (get_mods() & MOD_BIT(KC_LSFT)) {
-            shift_interrupted[0] = true;
-            shift_interrupted[1] = true;
-          }
-        #endif
-        if (!shift_interrupted[1] && timer_elapsed(scs_timer[1]) < TAPPING_TERM) {
-          register_code(RSPC_KEY);
-          unregister_code(RSPC_KEY);
-        }
-        unregister_mods(MOD_BIT(KC_RSFT));
-      }
-      return false;
-    }
-  }
-}
+#define RSPC_KEY KC_MINS
 
 // Foundation
 #define _BL 0
@@ -82,7 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_BL] = KEYMAP(
   KC_GESC,KC_1,   KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,   KC_9,   KC_0,   KC_MINS,KC_EQL, KC_GRV, KC_BSLS,        TG(_CL), \
   KC_TAB ,KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,   KC_O,   KC_P,   KC_LBRC,KC_RBRC,KC_BSPC,                KC_DEL , \
-  KR_LCTL,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NO  ,KC_ENT ,                         \
+  KC_LCTL,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NO  ,KC_ENT ,                         \
   KC_LALT,KC_LSPO,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,KC_DOT, KC_SLSH,KC_NO  ,KC_RSPC,        KC_UP,           \
   KC_CAPS,KC_LALT,KC_LGUI,KC_MHEN,        KC_SPC, KC_SPC,                         KC_HENK,KC_RGUI,KC_RALT,MO(_FL),KC_LEFT,KC_DOWN,KC_RGHT),
 
