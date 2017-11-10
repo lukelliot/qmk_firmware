@@ -137,7 +137,7 @@ void reset_keyboard(void) {
   uint16_t timer_start = timer_read();
   PLAY_SONG(goodbye_song);
   shutdown_user();
-  while(timer_elapsed(timer_start) < 250) 
+  while(timer_elapsed(timer_start) < 250)
     wait_ms(1);
   stop_all_notes();
 #else
