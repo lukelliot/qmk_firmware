@@ -4,7 +4,55 @@
 #define _______ KC_TRNS
 #define xxxxxxx KC_NO
 
-#define RSPC_KEY KC_MINS
+enum kropotkin_kc
+{
+  KR_LCTL = SAFE_RANGE,
+  KR_LALT,
+};
+
+
+static uint16_t kr_ctl_timer[1] = {0};
+static uint16_t kr_alt_timer[1] = {0};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch(keycode) {
+    case KR_LCTL:
+      if (record->event.pressed) {
+        kr_ctl_timer[0] = timer_read ();
+        register_mods(MOD_BIT(KC_LCTL));
+      }
+      else {
+        if (timer_elapsed(kr_ctl_timer[0]) < TAPPING_TERM) {
+          clear_mods();
+          register_code(KC_LSFT);
+          register_code(KC_MINS);
+          unregister_code(KC_MINS);
+          unregister_code(KC_LSFT);
+          clear_mods();
+        }
+        unregister_mods(MOD_BIT(KC_LCTL));
+      }
+      return false;
+    case KR_LALT:
+      if (record->event.pressed) {
+        kr_alt_timer[0] = timer_read ();
+        register_mods(MOD_BIT(KC_LALT));
+      }
+      else {
+        if (timer_elapsed(kr_alt_timer[0]) < TAPPING_TERM) {
+          clear_mods();
+          register_code(KC_LSFT);
+          register_code(KC_LBRC);
+          unregister_code(KC_LBRC);
+          unregister_code(KC_LSFT);
+          clear_mods();
+        }
+        unregister_mods(MOD_BIT(KC_LALT));
+      }
+      return false;
+  }
+  return true;
+}
 
 // Foundation
 #define _BL 0
@@ -27,9 +75,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_BL] = KEYMAP(
   KC_GESC,KC_1,   KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,   KC_9,   KC_0,   KC_MINS,KC_EQL, KC_GRV, KC_BSLS,        TG(_CL), \
   KC_TAB ,KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,   KC_O,   KC_P,   KC_LBRC,KC_RBRC,KC_BSPC,                KC_DEL , \
-  KC_LCTL,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NO  ,KC_ENT ,                         \
-  KC_LALT,KC_LSPO,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,KC_DOT, KC_SLSH,KC_NO  ,KC_RSPC,        KC_UP,           \
-  KC_CAPS,KC_LALT,KC_LGUI,KC_MHEN,        KC_SPC, KC_SPC,                         KC_HENK,KC_RGUI,KC_RALT,MO(_FL),KC_LEFT,KC_DOWN,KC_RGHT),
+  KR_LCTL,KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,KC_NO  ,KC_ENT ,                         \
+  KR_LALT,KC_LSPO,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,KC_DOT, KC_SLSH,KC_NO  ,KC_RSPC,        KC_UP,           \
+  KC_RCTL,KC_LALT,KC_LGUI,KC_MHEN,        KC_SPC, KC_SPC,                         KC_HENK,KC_RGUI,KC_RALT,MO(_FL),KC_LEFT,KC_DOWN,KC_RGHT),
 
   /*Keymap _DV: Dvorak
   */
@@ -41,7 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,_______,_______,_______,        _______,   _______,                     _______,_______,_______,_______,_______,_______,_______),
 
 
-  /* Keymap _NR: Normalize Layer
+  /* Keymap _NR: Normalize
    */
 [_NR] = KEYMAP(
   KC_GRV ,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,_______,KC_BSPC,KC_BSPC,        _______, \

@@ -1,1 +1,2 @@
-#define TAPPING_TERM 125
+#define TAPPING_TERM 100
+#define RSPC_KEY KC_BSLS
