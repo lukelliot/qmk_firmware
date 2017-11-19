@@ -4,6 +4,9 @@
 #define _______ KC_TRNS
 #define xxxxxxx KC_NO
 
+
+
+
 enum kropotkin_kc
 {
   KR_LCTL = SAFE_RANGE,
